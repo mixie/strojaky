@@ -60,7 +60,47 @@ Vzniknuté dáta môžem poskytnúť, ale nie sú súčasťou repozitára, kvôl
 
 \section{Predikovanie morfologických kategórii na základe slovných vektorov}
 \subsection{Príprava vstupu}
+Vstupné slová som si náhodne rozdelila na trénovaciu množinu veľkosti $5000$ a zvyšok ako testovaciu množinu. (Skúšala som aj nenáhodné rozdelenie, ktoré zobralo prvých $5000$ slovných tvarov na trénovanie, ale jeho výsledky neboli lepšie). Trénovanie som skúšala spúšťať na vektoroch rôznych veľkostí(50-500), ale trénovanie dlhších vektorov dosahovalo iba mierne lepšie výsledky. 
 
+\subsection{Spôsoby trénovania}
+Za najvhodnejší trénovací algoritmus pre tento problém som považovala SVM, konkr. Support Vector Classification s nastaveným 'one-vs-one' tvarom rozhodovacej funkcie. Zároveň som zapla podporu pre pravdepodobnosti jednotlivých tried. Pre SVM som sa rozhodla z dôvodu, že samotné slovné vektory podľa mňa najlepšie zodpovedajú spôsobu, akým pracuje SVM, teda rozdeľuje priestor vektorov na podpriestory. Rovnako som skúšala trénovať rozhodovacie stromy, ktoré síce dokázali lepšie nafitovať vstup, ale testovacie skóre bolo oveľa horšie. 
+
+Trénovala som niekoľko kategórii dát:
+\begin{enumerate}
+\item slovný druh slova
+\item rod podstatného mena
+\item rod prídavného mena
+\item číslo podstatného mena
+\item číslo prídavného mena
+\item pád podstatného mena
+\item pád prídavneho mena
+\item osobu slovesa\
+\end{enumerate}
+Uvádzam výsledky pre nastavenie $5000$ trénovacích slov, $71301$ testovacích slov, trénovanie na vektoroch dĺžky 500. DO úvahy som pri každom trénovaní aj testovaní brala iba slová, ktoré obsahovali danú gram. kategóriu.
+
+
+\subsubsection{Multiclass score}
+Multiclass skóre som vytvorila tak, že pre každý vstup som urobila zoznam všetkých možných správnych výstupov a následne som sa pozrela na pravdepodobnosti, ktoré pre daný vstup vytvorilo SVM. Skóre pre daný vstup som potom počítala ako:
+\[\frac{|dobre|-0.5*|zle|}{|triedy|},\]
+kde $|dobre|$ označuje počet správne určených výstupov aspoň s pravdepodobnosťou $\frac{1}{|triedy|}$, kde $|triedy|$ označujú celkový počet klasifikačných tried a zlé označujú počet nesprávne určených výstupov, ktoré majú tiež aspoň pravdepodobnosť $\frac{1}{|triedy|}$. Skóre som pre celú množinu spriemerovala. 
+\subsection{Vyhodnocovanie}
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{lllll}
+\textbf{N} & \textbf{Trénovacie skóre} & \textbf{Testovacie skóre} & \textbf{Multiclass skóre} & \textbf{} \\
+1          & 0.785951589938            & 0.742627459276            & 0.172624022994            &           \\
+2          & 0.691494981511            & 0.666489965922            & 0.0922757117145           &           \\
+3          & 0.546652609383            & 0.490822868183            & 0.125297233031            &         \\
+4          & 0.808785529716            & 0.781045323553            & 0.100273785079            &           \\
+5          & 0.821489482661            & 0.773028452644            & 0.103031776913          &           \\
+6          & 0.242424242424            & 0.233968499508            & 0.0581753455812            &         \\ 
+7          & 0.282407407407            & 0.253817185895            & 0.0214721913409          &           \\
+8          & 0.520661157025            & 0.424694708277            & 0.26275971093            &         \\ 
+\end{tabular}
+\end{table}
 
 
 

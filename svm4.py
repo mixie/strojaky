@@ -55,48 +55,42 @@ if method=='svm':
 elif method=='forest':
 	clf=RandomForestClassifier()
 elif method=='multiclass':
-	clf=OneVsRestClassifier(svm.SVC(kernel='linear'))
+	clf=OneVsRestClassifier(svm.SVC(decision_function_shape='ovo'))
 	Xtrain=list(set(Xtrain))
 	Ytrain=[]
 	for xt in Xtrain:
-		Ytrain.append([y for (x,y) in train if x==xt])
-	print Ytrain
+		Ytrain.append(tuple([y for (x,y) in train if x==xt]))
 	Ytrain=MultiLabelBinarizer().fit_transform(Ytrain)
 	Xtest=list(set(Xtest))
 	Ytest=[]
 	for xt in Xtest:
-		Ytest.append([y for (x,y) in test if x==xt])
+		Ytest.append(tuple([y for (x,y) in test if x==xt]))
 	Ytest=MultiLabelBinarizer().fit_transform(Ytest)
 
 
 clf.fit(Xtrain,Ytrain)
 print "train score: ",clf.score(Xtrain,Ytrain)
 print "test score: ",clf.score(Xtest,Ytest)
-X=Xtrain+Xtest
-Y=Ytest+Ytrain
-count=len(Counter(Y))
-if sys.argv[7]==1:
-	predictedY=clf.predict_proba(X)
-	oldelem=0
-	if trengramkat!=0:
-		for el in X:
-			if el!=oldelem:
-				indexes=[i for i,x in enumerate(X) if x == el]
-				res=[]
-				for i in indexes:
-					res.append(Y[i])
-				resS=set(res)
-				bad=False
-				for y in predictedY[indexes[0]]:
-					if y in 
-				for r in resS:
-					if predictedY[indexes[0]][int(r)-1]<(1.0/count):
-						bad=True
-				if bad:
-					wrong+=1
-				else:
-					good+=1
-				oldelem=el
+testpr=zip(Xtest+Xtrain,Ytest+Ytrain)
+testprob=list(set(testpr))
+Xtest=list(set([x for (x,y) in testprob]))
+score=0
+if int(sys.argv[7])==1:
+	predictedY=clf.predict_proba(Xtest)
+	for i in range(len(Xtest)):
+		res=[y for (x,y) in testprob if x==Xtest[i]]
+		resS=set(res)
+		realres=predictedY[i]
+		points=0
+		for i in range(len(realres)):
+			if i in resS and realres[i]>1.0/len(realres):
+				points+=1
+			if i not in resS and realres[i]>1.0/len(realres):
+				points-=0.5
+		if points<0:
+			points=0
+		score+=float(points)/len(resS)
+	score = score/len(Xtest)
+	print 'multilabel score:',score
 
-	print "wrong ",wrong
-	print "good ",good
+
