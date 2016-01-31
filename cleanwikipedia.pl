@@ -5,6 +5,7 @@
 # preserved.  Links are converted to normal text.  Digits are spelled out.
 
 # Written by Matt Mahoney, June 10, 2006.  This program is released to the public domain.
+# Adjusted for slovak language
 
 $/=">";                     # input record separator
 while (<>) {
@@ -35,7 +36,7 @@ while (<>) {
     s/\]//g;
     s/&[^;]*;/ /g;          # remove URL encoded chars
 
-    # convert to lowercase letters and spaces, spell digits
+    # convert to lowercase letters and spaces, spell digits, diakritika
     $_=" $_ ";
     tr/A-Z/a-z/;
     s/Á/á/g;
