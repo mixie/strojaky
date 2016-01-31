@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+\usepackage[slovak]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\title{Predikovanie gramatických kategórii slov na základe word2vec}
+\author{
+        Mária Vajdová
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+Projekt sa zaoberá zisťovaním, či existuje vzťah medzi slovnými vektormi vytvorenými knižnicou \texttt{word2vec} 
+a morfologickými kategóriami slov v slovenskom jazyku (slovný druh, rod, číslo a pod.) Práca sa skladala zo štyroch častí - 
+natrénovanie slovných vektorov na základe slovenskej wikipédie, získania morfologických anotácii slov z Jazykovedného ústavu Ľudovíta Štúra, následne vytvorenia trénovacích a testovacích dát z týchto zdrojov a natrénovania predikcie gramatických kategórii na týchto dátach.
+
+Výsledkom práce je porovnanie niekoľkých metód predikcie na základe word2vec. Zaujímavým výsledkom je nezávislosť veľkosti slovných vektorov a kvality predikcie a napr. dobrá schopnosť rozoznávať slovné druhy u predikovaných slov a oveľa horšia schopnosť rozoznávať iné gram. kategórie. 
+
+\end{abstract}
+
+\section{Trénovanie slovných vektorov pomocou word2vec}
+\subsection{Získavanie dát}
+Ako text pre trénovanie slovných vektorov som použila dump slovenskej wikipédie dostupný v tom čase na \url{https://dumps.wikimedia.org/backup-index.html}. Predspracovala som ho použitím upraveného perlového skriptu používaného na získavanie plain-textu pre word2vec z wikipédie na \url{http://mattmahoney.net/dc/textdata.html}. Môj upravený skript je dostupný v repozitári k projektu - oproti pôvodnému skriptu zachováva diakritiku a prekladá čísla do slovenčiny(\texttt{word2vec} lepšie pracuje so slovnými reprezentáciami čísel, napr. 12 - \texttt{jedna dva}). 
+
+\subsection{Trénovanie slovných vektorov}
+Na trénovanie slovných vektorov som použila štandartnú implementáciu knižnice \texttt{word2vec} dostupnú na \url{https://code.google.com/archive/p/word2vec/}. Knižnica slúži na preklad slov prirodzeného jazyka do niekoľkorozmerných vektorov reálnych čisel reprezentujúcich význam slov. Predikcia pre jednotlivé slová sa vykonáva na základe kontextu, v akom sa vyskytujú v texte. Predpokladá sa, že slová s podobným významom majú podobné slovné vektory. Morfologické vzťahy medzi týmito slovami zatiaľ veľmi podrobne skúmané neboli. 
+
+\subsection{Výstup word2vec}
+Celkový počet slov braných do úvahy v danom texte slovenskej wikipédie je $52887797$, čo predstavuje $187659$ unikátnych slov. Trénovala som slová s nasledovnými parametrami, pričom som trénovala vektory rôznej dĺžky kvôli následnému zisteniu korelácie s morfologickými znakmi slov. 
+Dané parametre, s ktorými som word2vec trénovala sú uvedené v tabuľke \ref{tab:v}. Natrénované slovné vektory nie sú kvôli svojej veľkosti súčasťou repozitára. Pre ďalšie spracovanie som používala iba slovné vektory, ktorých počet výskytov slov v slovenskej wikipédii bol aspoň 100, čo predstavuje 33401 slov. To je z dôvodu, že pre ďalšie použitie v diplomovej práci, ktorá by mala nadväzovať na tento projekt sa predpokladá použitie rozsiahlejšej databázy slov. 
+
+\begin{table}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Dĺžka vektorov & Počet iterácii alg. & Použitý alg. & Min. počet výskytov slova \\ \hline
+50 & 10 & skip-gram & 10 \\ 
+100 & 10 & skip-gram & 10 \\ 
+200 & 10 & skip-gram & 10 \\ 
+500 & 5 & skip-gram & 10 \\
+\hline
+\end{tabular}
+\caption{Parametre natrénovaných slovných vektorov}\label{tab:v}
+\end{table}
+
+\section{Morfologické anotácie slovenských slov}
+
+Táto časť práce mi osobne zabrala najviac času, najmä kvôli neprehľadnosti stránky \url{http://korpus.juls.savba.sk/}, kde sa morfologické anotácie slov nachádzajú. Stránka poskytuje webové rozhranie, ktorým sa dajú vyhľadávať tvary slov slovenského jazyka a rovnako poskytuje databázu, kde sa dá pristupovať k rôznym korpusom. Až po konzultácii so zamestnancami som sa dostala k dátam, ktoré som reálne potrebovala a to \url{http://korpus.juls.savba.sk/morphology_database.html}, kde sú dostupné morfologické anotácie asi milióna slov slovenského jazyka. Ja som používala voľne prístupnú morfologickú databázu, verziu 2015-02-05. 
+
+Z danej databázy som vybrala slová, pre ktoré máme aj natrénované slovné vektory (tie, ktoré mali výskyt aspoň 100 vo wikipédii) a prečíslovala morfologické anotácie pre slovný druh, rod, číslo, pád a osobu (pri slovesách). Skript, ktorý to robil je k dispozícii v repozitári.  
+
+Problémom s týmito dátami, ktoré bude pravdepodobne v budúcnosti treba lepšie riešiť je viacznačná morfologická anotácia pre jedno slovo (jeden tvar slova môže zodpovedať viacerým pádom slova a pod.). Pri spracovaní vstupu som vyhadzovala všetky duplicitné dvojice slovo - morfologická anotácia (daný dokument neobsahuje duplicity, my sme ale nebrali do úvahy všetky morfologické kategórie, z toho dôvodu duplicity vznikli). 
+
+Vzniknuté dáta môžem poskytnúť, ale nie sú súčasťou repozitára, kvôli tomu, že nemám na ich zverejňovanie práva. 
+
+\section{Predikovanie morfologických kategórii na základe slovných vektorov}
+\subsection{Príprava vstupu}
+
+
+
+
+\paragraph{Outline}
+The remainder of this article is organized as follows.
+Section~\ref{previous work} gives account of previous work.
+Our new and exciting results are described in Section~\ref{results}.
+Finally, Section~\ref{conclusions} gives the conclusions.
+
+\section{Previous work}\label{previous work}
+A much longer \LaTeXe{} example was written by Gil~\cite{Gil:02}.
+
+\section{Results}\label{results}
+In this section we describe the results.
+
+\section{Conclusions}\label{conclusions}
+We worked hard, and achieved very little.
+
+\bibliographystyle{abbrv}
+\bibliography{main}
+
+\end{document}
+This is never printed
+  
