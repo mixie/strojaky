@@ -78,12 +78,10 @@ Trénovala som niekoľko kategórii dát:
 \end{enumerate}
 Uvádzam výsledky pre nastavenie $5000$ trénovacích slov, $71301$ testovacích slov, trénovanie na vektoroch dĺžky 500. DO úvahy som pri každom trénovaní aj testovaní brala iba slová, ktoré obsahovali danú gram. kategóriu.
 
-
-\subsubsection{Multiclass score}
-Multiclass skóre som vytvorila tak, že pre každý vstup som urobila zoznam všetkých možných správnych výstupov a následne som sa pozrela na pravdepodobnosti, ktoré pre daný vstup vytvorilo SVM. Skóre pre daný vstup som potom počítala ako:
-\[\frac{|dobre|-0.5*|zle|}{|triedy|},\]
-kde $|dobre|$ označuje počet správne určených výstupov aspoň s pravdepodobnosťou $\frac{1}{|triedy|}$, kde $|triedy|$ označujú celkový počet klasifikačných tried a zlé označujú počet nesprávne určených výstupov, ktoré majú tiež aspoň pravdepodobnosť $\frac{1}{|triedy|}$. Skóre som pre celú množinu spriemerovala. 
 \subsection{Vyhodnocovanie}
+
+Pre každú meranú kategóriu som si zrátala trénovacie skóre, testovacie skóre a multiclass skóre, ktorého výpočet je popísany nižšie. 
+
 
 \begin{table}[]
 \centering
@@ -103,25 +101,20 @@ kde $|dobre|$ označuje počet správne určených výstupov aspoň s pravdepodo
 \end{table}
 
 
+\subsubsection{Multiclass score}
+Multiclass skóre som vytvorila tak, že pre každý vstup som urobila zoznam všetkých možných správnych výstupov a následne som sa pozrela na pravdepodobnosti, ktoré pre daný vstup vytvorilo SVM. Skóre pre daný vstup som potom počítala ako:
+\[\frac{|dobre|-0.5*|zle|}{|triedy|},\]
+kde $|dobre|$ označuje počet správne určených výstupov aspoň s pravdepodobnosťou $\frac{1}{|triedy|}$, kde $|triedy|$ označujú celkový počet klasifikačných tried a zlé označujú počet nesprávne určených výstupov, ktoré majú tiež aspoň pravdepodobnosť $\frac{1}{|triedy|}$. Skóre som pre celú množinu spriemerovala. 
 
-\paragraph{Outline}
-The remainder of this article is organized as follows.
-Section~\ref{previous work} gives account of previous work.
-Our new and exciting results are described in Section~\ref{results}.
-Finally, Section~\ref{conclusions} gives the conclusions.
 
-\section{Previous work}\label{previous work}
-A much longer \LaTeXe{} example was written by Gil~\cite{Gil:02}.
+\subsubsection{Multilabel vyhodnocovanie}
+Skúšala som trénovať aj multilabel vyhodnocovanie pomocou OneVsRestClassifier, ale jeho výsledky tiež neboli veľmi dobré. 
 
-\section{Results}\label{results}
-In this section we describe the results.
+\subsection{Výsledky}
+Celkovo trénovanie nedopadlo až tak dobre, skúšala som viaceré metódy, z toho SVM mala najlepšie testovacie výsledky. Z výsledkov vyplýva, že vo vektoroch sa odzrkadľuje slovný druh slova, rovnako aj rod a číslo podstatného a prídávneho mena, ale je problém s určovaním pádu. Osoba slovies sa tiež veľmi nepodarila určiť. 
 
-\section{Conclusions}\label{conclusions}
-We worked hard, and achieved very little.
-
-\bibliographystyle{abbrv}
-\bibliography{main}
+\section{Úspešnosť projektu}
+Projekt považujem skôr za neúspešný, bol pre mňa veľký problém spracovávať viacznačné dáta - slová, ktoré reprezetnovali viacero gramatických kategórii naraz. V budúcnosti by bolo dobré lepšie sa zamyslieť nad predprípravou dát na ich spracovanie, príp. úpravou word2vec algoritmu. 
 
 \end{document}
-This is never printed
   
