@@ -63,7 +63,9 @@ Vzniknuté dáta môžem poskytnúť, ale nie sú súčasťou repozitára, kvôl
 Vstupné slová som si náhodne rozdelila na trénovaciu množinu veľkosti $5000$ a zvyšok ako testovaciu množinu. (Skúšala som aj nenáhodné rozdelenie, ktoré zobralo prvých $5000$ slovných tvarov na trénovanie, ale jeho výsledky neboli lepšie). Trénovanie som skúšala spúšťať na vektoroch rôznych veľkostí(50-500), ale trénovanie dlhších vektorov dosahovalo iba mierne lepšie výsledky. 
 
 \subsection{Spôsoby trénovania}
-Za najvhodnejší trénovací algoritmus pre tento problém som považovala SVM, konkr. Support Vector Classification s nastaveným 'one-vs-one' tvarom rozhodovacej funkcie. Zároveň som zapla podporu pre pravdepodobnosti jednotlivých tried. Pre SVM som sa rozhodla z dôvodu, že samotné slovné vektory podľa mňa najlepšie zodpovedajú spôsobu, akým pracuje SVM, teda rozdeľuje priestor vektorov na podpriestory. Rovnako som skúšala trénovať rozhodovacie stromy, ktoré síce dokázali lepšie nafitovať vstup, ale testovacie skóre bolo oveľa horšie. 
+Za najvhodnejší trénovací algoritmus pre tento problém som považovala SVM, konkr. Support Vector Classification s nastaveným 'one-vs-one' tvarom rozhodovacej funkcie. Zároveň som zapla podporu pre pravdepodobnosti jednotlivých tried. Pre SVM som sa rozhodla z dôvodu, že samotné slovné vektory podľa mňa najlepšie zodpovedajú spôsobu, akým pracuje SVM, teda rozdeľuje priestor vektorov na podpriestory. Rovnako som skúšala trénovať rozhodovacie stromy, ktoré síce dokázali lepšie nafitovať vstup, ale testovacie skóre bolo oveľa horšie. Napr. natrénované slovné druhy s rovnakými parametrami ako pre SVM dali testovacie skóre iba 0.617050983711 a porovnateľné multilabel skóre. 
+
+Implementácia bola v jazyku Python, použitá knižnica \texttt{sklearn}. 
 
 Trénovala som niekoľko kategórii dát:
 \begin{enumerate}
@@ -76,7 +78,7 @@ Trénovala som niekoľko kategórii dát:
 \item pád prídavneho mena
 \item osobu slovesa\
 \end{enumerate}
-Uvádzam výsledky pre nastavenie $5000$ trénovacích slov, $71301$ testovacích slov, trénovanie na vektoroch dĺžky 500. DO úvahy som pri každom trénovaní aj testovaní brala iba slová, ktoré obsahovali danú gram. kategóriu.
+Uvádzam výsledky pre nastavenie $5000$ trénovacích slov, $71301$ testovacích slov, trénovanie na vektoroch dĺžky 500. DO úvahy som pri každom trénovaní aj testovaní brala iba slová, ktoré obsahovali danú gram. kategóriu. Ak som zvýšila počet trénovacích parametrov, skóre sa už ďalej výrazne nezlepšovalo. 
 
 \subsection{Vyhodnocovanie}
 
@@ -114,7 +116,7 @@ Skúšala som trénovať aj multilabel vyhodnocovanie pomocou OneVsRestClassifie
 Celkovo trénovanie nedopadlo až tak dobre, skúšala som viaceré metódy, z toho SVM mala najlepšie testovacie výsledky. Z výsledkov vyplýva, že vo vektoroch sa odzrkadľuje slovný druh slova, rovnako aj rod a číslo podstatného a prídávneho mena, ale je problém s určovaním pádu. Osoba slovies sa tiež veľmi nepodarila určiť. 
 
 \section{Úspešnosť projektu}
-Projekt považujem skôr za neúspešný, bol pre mňa veľký problém spracovávať viacznačné dáta - slová, ktoré reprezetnovali viacero gramatických kategórii naraz. V budúcnosti by bolo dobré lepšie sa zamyslieť nad predprípravou dát na ich spracovanie, príp. úpravou word2vec algoritmu. 
+Projekt považujem skôr za neúspešný, bol pre mňa veľký problém spracovávať viacznačné dáta - slová, ktoré reprezentovali viacero gramatických kategórii naraz. V budúcnosti by bolo dobré lepšie sa zamyslieť nad predprípravou dát na ich spracovanie, príp. úpravou word2vec algoritmu. 
 
 \end{document}
-  
+ 
